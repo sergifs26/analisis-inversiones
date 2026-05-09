@@ -19,6 +19,15 @@ elif authentication_status is None:
 authenticator.logout("Cerrar sesión", "sidebar")
 st.sidebar.write(f"Bienvenido, {name}")
 
+from app.stripe_gate import has_active_subscription
+
+# Verificar suscripcion activa
+user_email = _auth_config["credentials"]["usernames"].get(username, {}).get("email", "")
+if not has_active_subscription(user_email):
+    st.error("Tu suscripción no está activa.")
+    st.info("Suscríbete por 19€/mes para acceder al análisis profesional.")
+    st.stop()
+
 TEMPLATE = Path("templates/Modelo 2025 vacio.xlsx")
 
 st.set_page_config(
