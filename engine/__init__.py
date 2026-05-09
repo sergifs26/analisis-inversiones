@@ -5,3 +5,4 @@ from engine.calculator import (
     build_scenarios, calc_buyback_pct, analyst_growth, build_year_col_map
 )
 from engine.excel_writer import generate_excel
+from engine.runner import run_analysis
