@@ -1,5 +1,5 @@
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
+from typing import Any, Optional
 import pandas as pd
 
 
@@ -38,7 +38,7 @@ class AnalysisResult:
     sector: str
     industry: str
     currency: str
-    years: list
+    years: list[Any]
     income: pd.DataFrame
     balance: pd.DataFrame
     cashflow: pd.DataFrame
@@ -46,4 +46,4 @@ class AnalysisResult:
     assumptions: Assumptions
     multiples: Multiples
     scenarios: Scenarios
-    year_col: dict
+    year_col: dict[Any, int]
