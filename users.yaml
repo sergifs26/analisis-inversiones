@@ -1,0 +1,10 @@
+credentials:
+  usernames:
+    demo:
+      email: demo@ejemplo.com
+      name: Usuario Demo
+      password: $2b$12$vrsHMs65FEYj3uyiieIR4eDeCOs.DFOXLNOG2r5XRLBCOdf3t8bBa
+cookie:
+  expiry_days: 30
+  key: clave-secreta-cambiar-en-produccion-32chars
+  name: inv_auth

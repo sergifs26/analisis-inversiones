@@ -4,6 +4,20 @@ import streamlit as st
 from engine.runner import run_analysis
 from engine.excel_writer import generate_excel
 from app.charts import revenue_chart, margins_chart, scenarios_chart, multiples_table
+from app.auth import load_authenticator
+
+authenticator, _auth_config = load_authenticator()
+name, authentication_status, username = authenticator.login("Acceder", "main")
+
+if authentication_status is False:
+    st.error("Usuario o contraseña incorrectos.")
+    st.stop()
+elif authentication_status is None:
+    st.warning("Introduce tus credenciales.")
+    st.stop()
+
+authenticator.logout("Cerrar sesión", "sidebar")
+st.sidebar.write(f"Bienvenido, {name}")
 
 TEMPLATE = Path("templates/Modelo 2025 vacio.xlsx")
 
