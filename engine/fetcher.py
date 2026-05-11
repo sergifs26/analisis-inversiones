@@ -1,4 +1,5 @@
 import concurrent.futures
+import time
 import warnings
 import pandas as pd
 import yfinance as yf
@@ -8,8 +9,17 @@ warnings.filterwarnings("ignore")
 
 def fetch_company_data(ticker_symbol: str) -> dict:
     """Descarga todos los datos de Yahoo Finance en paralelo. Devuelve dict con DataFrames."""
-    t = yf.Ticker(ticker_symbol)
-    info = t.info
+    # Reintenta hasta 3 veces con espera si Yahoo Finance da rate limit
+    for attempt in range(3):
+        try:
+            t = yf.Ticker(ticker_symbol)
+            info = t.info
+            break
+        except Exception as e:
+            if attempt == 2:
+                raise
+            time.sleep(5 * (attempt + 1))
+            continue
 
     def safe(fn):
         try:

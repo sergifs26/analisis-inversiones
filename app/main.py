@@ -68,6 +68,12 @@ if st.button("Analizar", type="primary", use_container_width=False):
             except ValueError as e:
                 st.error(str(e))
                 st.stop()
+            except Exception as e:
+                if "RateLimit" in type(e).__name__ or "RateLimit" in str(e):
+                    st.error("Yahoo Finance ha limitado las peticiones temporalmente. Espera 30 segundos e inténtalo de nuevo.")
+                else:
+                    st.error(f"Error al obtener datos: {e}")
+                st.stop()
 
         col1, col2, col3, col4 = st.columns(4)
         col1.metric("Empresa",  result.company_name)
