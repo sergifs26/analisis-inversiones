@@ -1,23 +1,14 @@
 import concurrent.futures
 import warnings
 import pandas as pd
-import requests
 import yfinance as yf
 
 warnings.filterwarnings("ignore")
 
-_HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
-                  "(KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
-    "Accept-Language": "en-US,en;q=0.9",
-}
-
 
 def fetch_company_data(ticker_symbol: str) -> dict:
     """Descarga todos los datos de Yahoo Finance en paralelo. Devuelve dict con DataFrames."""
-    session = requests.Session()
-    session.headers.update(_HEADERS)
-    t = yf.Ticker(ticker_symbol, session=session)
+    t = yf.Ticker(ticker_symbol)
     info = t.info
 
     def safe(fn):
