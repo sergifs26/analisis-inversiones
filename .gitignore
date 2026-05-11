@@ -1,5 +1,6 @@
 .streamlit/secrets.toml
 users.yaml
+!templates/Modelo 2025 vacio.xlsx
 *.xlsx
 __pycache__/
 *.pyc
