@@ -1,5 +1,9 @@
+import sys
 import tempfile
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).parent.parent))
+
 import streamlit as st
 from engine.runner import run_analysis
 from engine.excel_writer import generate_excel
