@@ -11,7 +11,13 @@ from app.charts import revenue_chart, margins_chart, scenarios_chart, multiples_
 from app.auth import load_authenticator
 
 authenticator, _auth_config = load_authenticator()
-name, authentication_status, username = authenticator.login("Acceder", "main")
+try:
+    name, authentication_status, username = authenticator.login("Acceder", "main")
+except TypeError:
+    authenticator.login(key="login")
+    name = st.session_state.get("name")
+    authentication_status = st.session_state.get("authentication_status")
+    username = st.session_state.get("username")
 
 if authentication_status is False:
     st.error("Usuario o contraseña incorrectos.")
