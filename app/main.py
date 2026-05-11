@@ -51,17 +51,58 @@ st.set_page_config(
 st.title("📈 Análisis de Inversiones")
 st.caption("Modelo profesional de valoración automatizado")
 
-ticker_input = st.text_input(
-    "Introduce el ticker de la empresa",
-    placeholder="AAPL, MSFT, ITX.MC, SAN.MC...",
-    max_chars=20,
+from app.search import search_local, search_yahoo
+
+st.subheader("🔍 Buscar empresa")
+search_query = st.text_input(
+    "Nombre o ticker de la empresa",
+    placeholder="Ej: Apple, Inditex, AAPL, ITX.MC...",
 )
 
-if st.button("Analizar", type="primary", use_container_width=False):
-    if not ticker_input.strip():
-        st.warning("Introduce un ticker válido.")
+selected_ticker = None
+
+if search_query and len(search_query) >= 2:
+    local_results = search_local(search_query)
+
+    if local_results:
+        st.markdown("**Empresas populares:**")
+        options_local = {f"{name} ({ticker}) — {market}": ticker
+                        for ticker, name, market in local_results}
+        choice_local = st.selectbox(
+            "Selecciona de la lista:",
+            ["— Selecciona una empresa —"] + list(options_local.keys()),
+            key="local_select",
+        )
+        if choice_local != "— Selecciona una empresa —":
+            selected_ticker = options_local[choice_local]
+
+    with st.expander("🌐 Buscar en Yahoo Finance (tiempo real)", expanded=not local_results):
+        if st.button("Buscar en Yahoo Finance", key="yahoo_search"):
+            yahoo_results = search_yahoo(search_query)
+            if yahoo_results:
+                st.session_state["yahoo_results"] = yahoo_results
+            else:
+                st.warning("No se encontraron resultados. Prueba con otro término.")
+
+        if "yahoo_results" in st.session_state and st.session_state["yahoo_results"]:
+            options_yahoo = {f"{name} ({ticker}) — {exchange}": ticker
+                            for ticker, name, exchange in st.session_state["yahoo_results"]}
+            choice_yahoo = st.selectbox(
+                "Selecciona de Yahoo Finance:",
+                ["— Selecciona una empresa —"] + list(options_yahoo.keys()),
+                key="yahoo_select",
+            )
+            if choice_yahoo != "— Selecciona una empresa —":
+                selected_ticker = options_yahoo[choice_yahoo]
+
+if selected_ticker:
+    st.info(f"Empresa seleccionada: **{selected_ticker}**")
+
+if st.button("Analizar", type="primary", disabled=not selected_ticker):
+    if not selected_ticker:
+        st.warning("Selecciona una empresa primero.")
     else:
-        ticker = ticker_input.strip().upper()
+        ticker = selected_ticker.strip().upper()
         with st.spinner(f"Analizando {ticker}..."):
             try:
                 result = run_analysis(ticker)
