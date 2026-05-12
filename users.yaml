@@ -1,5 +1,9 @@
 credentials:
   usernames:
+    sergi:
+      email: sergifs26@gmail.com
+      name: Sergi
+      password: $2b$12$be3KE6PTWHdhGFbpIunQN./L0/QlGNPyyaX8wnPAM9Ysxx.W/7AwO
     demo:
       email: demo@ejemplo.com
       name: Usuario Demo
