@@ -3,8 +3,13 @@ import stripe
 import streamlit as st
 
 
+ADMIN_EMAILS = {"sergifs26@gmail.com"}
+
+
 def has_active_subscription(email: str) -> bool:
     """Devuelve True si el email tiene una suscripcion Stripe activa."""
+    if email in ADMIN_EMAILS:
+        return True
     try:
         stripe.api_key = st.secrets.get("STRIPE_SECRET_KEY", "")
     except Exception:
