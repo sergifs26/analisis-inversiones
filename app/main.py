@@ -5,22 +5,45 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 import streamlit as st
-from engine.runner import run_analysis
-from engine.excel_writer import generate_excel
-from app.charts import revenue_chart, margins_chart, scenarios_chart, multiples_table
 from app.auth import load_authenticator
 
+st.set_page_config(
+    page_title="Análisis de Inversiones",
+    page_icon="📈",
+    layout="wide",
+)
+
 authenticator, _auth_config = load_authenticator()
-authenticator.login(key="login")
+
 name = st.session_state.get("name")
 authentication_status = st.session_state.get("authentication_status")
 username = st.session_state.get("username")
 
-if authentication_status is False:
-    st.error("Usuario o contraseña incorrectos.")
-    st.stop()
-elif authentication_status is None:
-    st.warning("Introduce tus credenciales.")
+if not authentication_status:
+    tab_login, tab_register = st.tabs(["Iniciar sesión", "Crear cuenta"])
+
+    with tab_login:
+        authenticator.login(key="login")
+        if authentication_status is False:
+            st.error("Usuario o contraseña incorrectos.")
+
+    with tab_register:
+        st.subheader("Crear una cuenta")
+        st.write("Accede al análisis profesional de inversiones por **19€/mes**.")
+        st.divider()
+        st.markdown("### Paso 1 — Suscríbete")
+        st.link_button(
+            "💳 Suscribirme por 19€/mes",
+            "https://buy.stripe.com/7sYfZkeem3507itexZao800",
+            type="primary",
+        )
+        st.divider()
+        st.markdown("### Paso 2 — Recibe tus credenciales")
+        st.info(
+            "Tras completar el pago recibirás un email con tu usuario y contraseña "
+            "en menos de 24 horas."
+        )
+
     st.stop()
 
 authenticator.logout("Cerrar sesión", "sidebar")
@@ -28,7 +51,6 @@ st.sidebar.write(f"Bienvenido, {name}")
 
 from app.stripe_gate import has_active_subscription
 
-# Verificar suscripcion activa
 user_email = (
     _auth_config.get("credentials", {})
     .get("usernames", {})
@@ -38,19 +60,17 @@ user_email = (
 if not has_active_subscription(user_email):
     st.error("Tu suscripción no está activa.")
     st.info("Suscríbete por 19€/mes para acceder al análisis profesional.")
+    st.link_button("💳 Suscribirme ahora", "https://buy.stripe.com/7sYfZkeem3507itexZao800", type="primary")
     st.stop()
 
 TEMPLATE = Path("templates/Modelo 2025 vacio.xlsx")
 
-st.set_page_config(
-    page_title="Análisis de Inversiones",
-    page_icon="📈",
-    layout="wide",
-)
-
 st.title("📈 Análisis de Inversiones")
 st.caption("Modelo profesional de valoración automatizado")
 
+from engine.runner import run_analysis
+from engine.excel_writer import generate_excel
+from app.charts import revenue_chart, margins_chart, scenarios_chart, multiples_table
 from app.search import search_local, search_yahoo
 
 st.subheader("🔍 Buscar empresa")
